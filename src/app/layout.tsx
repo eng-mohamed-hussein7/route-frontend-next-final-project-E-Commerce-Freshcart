@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Exo } from "next/font/google";
+import "../styles/globals.css"
+import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import "@fortawesome/fontawesome-svg-core/styles";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const exo = Exo({
+  variable: "--font-exo",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -25,9 +27,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${exo.className} font-medium`}
       >
+        <Navbar />
         {children}
+        <Footer />
       </body>
     </html>
   );

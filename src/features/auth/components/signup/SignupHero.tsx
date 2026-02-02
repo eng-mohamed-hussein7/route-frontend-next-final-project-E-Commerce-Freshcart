@@ -5,7 +5,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import reviewAuthor from "../../../assets/images/review-author.png";
+import reviewAuthor from "../../../../assets/images/review-author.png";
 
 export default function SignupHero() {
   return (

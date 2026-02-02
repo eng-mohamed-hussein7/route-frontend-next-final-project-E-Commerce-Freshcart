@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Exo } from "next/font/google";
-import "../styles/globals.css"
+import "../styles/globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-
+import { ToastContainer, Bounce } from "react-toastify";
 import "@fortawesome/fontawesome-svg-core/styles";
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
@@ -26,12 +26,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${exo.className} font-medium`}
-      >
+      <body className={`${exo.className} font-medium`}>
         <Navbar />
         {children}
         <Footer />
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          transition={Bounce}
+        />
       </body>
     </html>
   );

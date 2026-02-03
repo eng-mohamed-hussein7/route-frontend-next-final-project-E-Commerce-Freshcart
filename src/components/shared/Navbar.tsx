@@ -27,9 +27,17 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "../../assets/images/freshcart-logo.svg";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import useLogout from "@/features/auth/hooks/useLogout";
+
 export default function Navbar() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useSelector(
+    (appState: RootState) => appState.auth,
+  );
+  const {logout} = useLogout();
   return (
     <>
       <header>
@@ -126,49 +134,62 @@ export default function Navbar() {
                   <span className="text-sm">Cart</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  href={"account"}
-                  className={
-                    pathname === "/account"
-                      ? "flex flex-col items-center text-primary-600"
-                      : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
-                  }
-                >
-                  <FontAwesomeIcon icon={faUser} className="size-4" />
-                  <span className="text-sm">Account</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"signup"}
-                  className={
-                    pathname === "/signup"
-                      ? "flex flex-col items-center text-primary-600"
-                      : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
-                  }
-                >
-                  <FontAwesomeIcon icon={faUserPlus} className="size-4" />
-                  <span className="text-sm">Sign up</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"login"}
-                  className={
-                    pathname === "/login"
-                      ? "flex flex-col items-center text-primary-600"
-                      : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
-                  }
-                >
-                  <FontAwesomeIcon icon={faAddressCard} className="size-4" />
-                  <span className="text-sm">Login</span>
-                </Link>
-              </li>
-              <li className="flex-col gap-0 hover:text-primary-600 transition-colors duration-200 cursor-pointer">
-                <FontAwesomeIcon icon={faRightFromBracket} className="size-4" />
-                <span className="text-sm">Logout</span>
-              </li>
+              {isAuthenticated ? (
+                <>
+                  <li>
+                    <Link
+                      href={"account"}
+                      className={
+                        pathname === "/account"
+                          ? "flex flex-col items-center text-primary-600"
+                          : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
+                      }
+                    >
+                      <FontAwesomeIcon icon={faUser} className="size-4" />
+                      <span className="text-sm">Account</span>
+                    </Link>
+                  </li>
+                  <li className="flex-col gap-0 hover:text-primary-600 transition-colors duration-200 cursor-pointer" onClick={logout}>
+                    <FontAwesomeIcon
+                      icon={faRightFromBracket}
+                      className="size-4"
+                    />
+                    <span className="text-sm">Logout</span>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <Link
+                      href={"signup"}
+                      className={
+                        pathname === "/signup"
+                          ? "flex flex-col items-center text-primary-600"
+                          : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
+                      }
+                    >
+                      <FontAwesomeIcon icon={faUserPlus} className="size-4" />
+                      <span className="text-sm">Sign up</span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href={"login"}
+                      className={
+                        pathname === "/login"
+                          ? "flex flex-col items-center text-primary-600"
+                          : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
+                      }
+                    >
+                      <FontAwesomeIcon
+                        icon={faAddressCard}
+                        className="size-4"
+                      />
+                      <span className="text-sm">Login</span>
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
             <div className="lg:hidden">
               <button
@@ -314,12 +335,12 @@ export default function Navbar() {
                       href={"cart"}
                       className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/cart" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
-                     <div className="relative">
-                    <FontAwesomeIcon icon={faCartShopping} />
-                    <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                      3
-                    </span>
-                  </div>
+                      <div className="relative">
+                        <FontAwesomeIcon icon={faCartShopping} />
+                        <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                          3
+                        </span>
+                      </div>
                       <span className="text-sm">Cart</span>
                     </Link>
                   </li>
@@ -338,34 +359,44 @@ export default function Navbar() {
               <div className="border-t-2 border-gray-300/50 pt-5">
                 <h2 className="text-xl font-semibold">Account</h2>
                 <ul className="space-y-2 mt-3 *:hover:bg-gray-100 duration-200 transition-colors ">
-                  <li>
-                    <Link
-                      href={"signup"}
-                      className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/signup" ? "text-primary-600 bg-primary-100" : ""}`}
-                    >
-                      <FontAwesomeIcon icon={faUserPlus} className="size-4" />
-                      <span className="text-sm">Sign up</span>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href={"login"}
-                      className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/login" ? "text-primary-600 bg-primary-100" : ""}`}
-                    >
-                      <FontAwesomeIcon
-                        icon={faAddressCard}
-                        className="size-4"
-                      />
-                      <span className="text-sm">Login</span>
-                    </Link>
-                  </li>
-                  <li className="gap-2 cursor-pointer py-3 px-2 w-full rounded-md">
-                    <FontAwesomeIcon
-                      icon={faRightFromBracket}
-                      className="size-4"
-                    />
-                    <span className="text-sm">Logout</span>
-                  </li>
+                  {isAuthenticated ? (
+                    <>
+                      <li className="gap-2 cursor-pointer py-3 px-2 w-full rounded-md"  onClick={logout}>
+                        <FontAwesomeIcon
+                          icon={faRightFromBracket}
+                          className="size-4"
+                        />
+                        <span className="text-sm">Logout</span>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        <Link
+                          href={"signup"}
+                          className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/signup" ? "text-primary-600 bg-primary-100" : ""}`}
+                        >
+                          <FontAwesomeIcon
+                            icon={faUserPlus}
+                            className="size-4"
+                          />
+                          <span className="text-sm">Sign up</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          href={"login"}
+                          className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/login" ? "text-primary-600 bg-primary-100" : ""}`}
+                        >
+                          <FontAwesomeIcon
+                            icon={faAddressCard}
+                            className="size-4"
+                          />
+                          <span className="text-sm">Login</span>
+                        </Link>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </div>

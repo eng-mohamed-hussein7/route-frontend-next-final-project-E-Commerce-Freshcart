@@ -10,6 +10,7 @@
 [✅] client state management =>     Redux
 [✅] server state management =>     tanstack query
 [✅] toast                   =>     react-toastify
+[✅] slider                  =>     swiper
 
 ## Pages
 [✔] Home Page

@@ -52,7 +52,13 @@ export default function LoginForm() {
       if (response.success) {
         toast.success(response.message);
         await setToken(response.data?.token, values.rememberMe);
-        dispatch(setAuthInfo({userInfo:response.data?.userInfo,token:response.data?.token,isAuthenticated:true}))
+        dispatch(
+          setAuthInfo({
+            userInfo: response.data?.userInfo,
+            token: response.data?.token,
+            isAuthenticated: true,
+          }),
+        );
         setTimeout(() => {
           router.push("/");
         }, 2000);
@@ -161,10 +167,10 @@ export default function LoginForm() {
               Password
             </label>
             <Link
-              href="/forgot-password"
+              href="/forget-password"
               className="text-sm text-primary-500 hover:text-primary-600 transition-colors"
             >
-              Forgot Password?
+              Forget Password?
             </Link>
           </div>
           <div className="relative">

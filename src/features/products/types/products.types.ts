@@ -52,3 +52,7 @@ export interface ProductsResponse {
   metadata: ProductsMetadata;
   data: Product[];
 }
+
+export interface SingleProductResponse {
+    data: Product;
+}

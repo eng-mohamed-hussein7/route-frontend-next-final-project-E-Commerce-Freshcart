@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,6 +9,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Product } from "../types/products.types";
 import Ratings from "@/components/ui/Ratings";
+import { addProductToCart, getLoggedUserCart } from "@/features/cart/server/cart.action";
+import { toast } from "react-toastify";
+import { useAppDispatch } from "@/store/store";
+import { setCartInfo } from "@/features/cart/store/cart.slice";
 
 export default function ProductCard({ info }: { info: Product }) {
   const {
@@ -25,6 +30,20 @@ export default function ProductCard({ info }: { info: Product }) {
   const discountPercentage = onSale
     ? Math.round(((price - priceAfterDiscount) / price) * 100)
     : 0;
+
+    const dispatch = useAppDispatch();
+    const handleAddToCart = async () => {
+      try {
+        const response = await addProductToCart({productId: _id});
+            if(response.status === "success"){
+              toast.success(response.message);
+              const cartInfo = await getLoggedUserCart();  
+              dispatch(setCartInfo(cartInfo));              
+            }
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group hover:shadow-lg transition hover:translate-y-[-5px] duration-300">
       <div className="relative">
@@ -91,7 +110,7 @@ export default function ProductCard({ info }: { info: Product }) {
               </span>
             )}
           </div>
-          <button className="h-10 w-10 rounded-full flex items-center justify-center transition bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-70">
+          <button onClick={handleAddToCart} className="h-10 w-10 rounded-full flex items-center justify-center transition bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-70">
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>

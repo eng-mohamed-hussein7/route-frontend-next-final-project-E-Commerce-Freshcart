@@ -25,10 +25,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import Image from "next/image";
-import logo from "../../assets/images/freshcart-logo.svg";
+import logo from "../../../assets/images/freshcart-logo.svg";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { AppState as RootState } from "@/store/store";
 import useLogout from "@/features/auth/hooks/useLogout";
 
 export default function Navbar() {
@@ -38,6 +38,7 @@ export default function Navbar() {
     (appState: RootState) => appState.auth,
   );
   const {logout} = useLogout();
+  const {numOfCartItems} = useSelector((appState: RootState) => appState.cart);
   return (
     <>
       <header>
@@ -127,9 +128,9 @@ export default function Navbar() {
                 >
                   <div className="relative">
                     <FontAwesomeIcon icon={faCartShopping} />
-                    <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                      3
-                    </span>
+                    {numOfCartItems > 0 && <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                      {numOfCartItems}
+                    </span>}
                   </div>
                   <span className="text-sm">Cart</span>
                 </Link>
@@ -337,9 +338,11 @@ export default function Navbar() {
                     >
                       <div className="relative">
                         <FontAwesomeIcon icon={faCartShopping} />
-                        <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                          3
-                        </span>
+                        {numOfCartItems > 0 && (
+                          <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                            {numOfCartItems}
+                          </span>
+                        )}
                       </div>
                       <span className="text-sm">Cart</span>
                     </Link>

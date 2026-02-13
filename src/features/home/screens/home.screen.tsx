@@ -1,7 +1,7 @@
 import DealsBanner from "../components/DealsBanner";
 import FeaturedProducts from "../components/FeaturedProducts";
 import HomeSlider from "../components/HomeSlider";
-import Newsletter from "../components/Newsletter";
+import Newsletter from "../../../components/shared/Newsletter";
 import OurCategories from "../components/OurCategories";
 import PromoBanner from "../components/PromoBanner";
 
@@ -11,9 +11,9 @@ export default function HomeScreen() {
       <HomeSlider />
       <PromoBanner />
       <OurCategories />
-      <DealsBanner/>
-      <FeaturedProducts/>
-      <Newsletter/>
+      <DealsBanner />
+      <FeaturedProducts />
+      <Newsletter />
     </>
-  )
+  );
 }

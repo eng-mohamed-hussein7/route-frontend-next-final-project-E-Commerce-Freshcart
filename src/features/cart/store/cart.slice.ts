@@ -38,8 +38,14 @@ const cartSlice = createSlice({
             state.totalCartPrice -= removedProduct.price * removedProduct.count;
            }
         },
+        clearCart(state) {
+            state.numOfCartItems = 0;
+            state.cartId = null;
+            state.products = [];
+            state.totalCartPrice = 0;
+        }
     },
 });
 
-export const { setCartInfo, removeProduct } = cartSlice.actions;
+export const { setCartInfo, removeProduct, clearCart } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;

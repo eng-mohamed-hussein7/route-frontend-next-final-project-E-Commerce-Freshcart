@@ -1,5 +1,9 @@
+import CheckoutScreen from "@/features/checkout/screens/checkout.screen"
+
 export default function Checkout() {
   return (
-    <div>Checkout</div>
+    <>
+    <CheckoutScreen />
+    </>
   )
 }

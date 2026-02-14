@@ -37,25 +37,25 @@ export async function verifyToken(): Promise<AuthState> {
   }
   try {
     const options: AxiosRequestConfig = {
-        url: "https://ecommerce.routemisr.com/api/v1/auth/verifyToken",
-        method: "GET",
+      url: "https://ecommerce.routemisr.com/api/v1/auth/verifyToken",
+      method: "GET",
       headers: {
         token,
       },
     };
-    const {data} = await axios.request(options);
-    
-    if(data.message === "verified"){
-        return {
-            userInfo: data.user,
-            token,
-            isAuthenticated: true,
-        };
-    } 
+    const { data } = await axios.request(options);
+    if (data.message === "verified") {
+      const { name, id, role } = data.decoded;
+      return {
+        userInfo: { name, id, role },
+        token,
+        isAuthenticated: true,
+      };
+    }
     return {
-        userInfo: null,
-        token: null,
-        isAuthenticated: false,
+      userInfo: null,
+      token: null,
+      isAuthenticated: false,
     };
   } catch (error) {
     return {

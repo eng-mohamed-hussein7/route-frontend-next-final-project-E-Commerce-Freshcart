@@ -37,8 +37,11 @@ export default function Navbar() {
   const { isAuthenticated } = useSelector(
     (appState: RootState) => appState.auth,
   );
-  const {logout} = useLogout();
-  const {numOfCartItems} = useSelector((appState: RootState) => appState.cart);
+  const { logout } = useLogout();
+  const { numOfCartItems } = useSelector(
+    (appState: RootState) => appState.cart,
+  );
+  const { count } = useSelector((appState: RootState) => appState.wishlist);
   return (
     <>
       <header>
@@ -112,8 +115,14 @@ export default function Navbar() {
                       : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
                   }
                 >
-                  <FontAwesomeIcon icon={faHeart} className="size-4" />
-
+                  <div className="relative">
+                    <FontAwesomeIcon icon={faHeart} className="size-4" />
+                    {count !== 0 && (
+                      <span className="bg-red-500 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                        {count}
+                      </span>
+                    )}
+                  </div>
                   <span className="text-sm">Wishlist</span>
                 </Link>
               </li>
@@ -128,9 +137,11 @@ export default function Navbar() {
                 >
                   <div className="relative">
                     <FontAwesomeIcon icon={faCartShopping} />
-                    {numOfCartItems > 0 && <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                      {numOfCartItems}
-                    </span>}
+                    {numOfCartItems > 0 && (
+                      <span className="bg-primary-600 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                        {numOfCartItems}
+                      </span>
+                    )}
                   </div>
                   <span className="text-sm">Cart</span>
                 </Link>
@@ -150,7 +161,10 @@ export default function Navbar() {
                       <span className="text-sm">Account</span>
                     </Link>
                   </li>
-                  <li className="flex-col gap-0 hover:text-primary-600 transition-colors duration-200 cursor-pointer" onClick={logout}>
+                  <li
+                    className="flex-col gap-0 hover:text-primary-600 transition-colors duration-200 cursor-pointer"
+                    onClick={logout}
+                  >
                     <FontAwesomeIcon
                       icon={faRightFromBracket}
                       className="size-4"
@@ -326,8 +340,14 @@ export default function Navbar() {
                       href={"wishlist"}
                       className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/wishlist" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
-                      <FontAwesomeIcon icon={faHeart} className="size-4" />
-
+                  <div className="relative">
+                    <FontAwesomeIcon icon={faHeart} className="size-4" />
+                    {count !== 0 && (
+                      <span className="bg-red-500 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                        {count}
+                      </span>
+                    )}
+                  </div>
                       <span className="text-sm">Wishlist</span>
                     </Link>
                   </li>
@@ -364,7 +384,10 @@ export default function Navbar() {
                 <ul className="space-y-2 mt-3 *:hover:bg-gray-100 duration-200 transition-colors ">
                   {isAuthenticated ? (
                     <>
-                      <li className="gap-2 cursor-pointer py-3 px-2 w-full rounded-md"  onClick={logout}>
+                      <li
+                        className="gap-2 cursor-pointer py-3 px-2 w-full rounded-md"
+                        onClick={logout}
+                      >
                         <FontAwesomeIcon
                           icon={faRightFromBracket}
                           className="size-4"

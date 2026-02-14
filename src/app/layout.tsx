@@ -9,6 +9,8 @@ import { verifyToken } from "@/features/auth/server/auth.actions";
 import icon from "../assets/images/favicon.ico";
 import { CartState } from "@/features/cart/store/cart.slice";
 import { getLoggedUserCart } from "@/features/cart/server/cart.action";
+import { WishlistState } from "@/features/wishlist/store/wishlist.slice";
+import { getLoggedUserWishlist } from "@/features/wishlist/server/wishlist.actions";
 
 const exo = Exo({
   variable: "--font-exo",
@@ -34,6 +36,13 @@ let defaultCartState : CartState ={
   totalCartPrice: 0,
 }
 
+let defaultWishlistState : WishlistState ={
+  count: 0,
+  data: [],
+  isLoading: false,
+  error: null,
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -42,6 +51,7 @@ export default async function RootLayout({
   const authValue = await verifyToken();  
 
 let cartState = defaultCartState;
+let wishlistState = defaultWishlistState;
   if(authValue.isAuthenticated){
     try {
       
@@ -54,15 +64,24 @@ let cartState = defaultCartState;
         numOfCartItems: cartValue.numOfCartItems,
         error: null,
       }
+
+      const wishlistValue = await getLoggedUserWishlist();
+      wishlistState = {
+        count: wishlistValue.count,
+        data: wishlistValue.data,
+        isLoading: false,
+        error: null,
+      }
     } catch (error) {
       cartState = defaultCartState;
+      wishlistState = defaultWishlistState;
     }
   }
 
   return (
     <html lang="en">
       <body className={`${exo.className} font-medium`}>
-        <Providers preloadedState={{auth: authValue, cart: cartState}}>
+        <Providers preloadedState={{auth: authValue, cart: cartState, wishlist: wishlistState}}>
           <Navbar />
           {children}
           <Footer />

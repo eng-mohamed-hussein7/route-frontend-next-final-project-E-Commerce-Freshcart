@@ -13,6 +13,8 @@ import { addProductToCart, getLoggedUserCart } from "@/features/cart/server/cart
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/store/store";
 import { setCartInfo } from "@/features/cart/store/cart.slice";
+import { addProductToWishlist, getLoggedUserWishlist } from "@/features/wishlist/server/wishlist.actions";
+import { setWishlistInfo } from "@/features/wishlist/store/wishlist.slice";
 
 export default function ProductCard({ info }: { info: Product }) {
   const {
@@ -44,6 +46,19 @@ export default function ProductCard({ info }: { info: Product }) {
             toast.error("Something went wrong");
         }
     }
+
+    const handleAddToWishlist = async () => {
+      try {
+        const response = await addProductToWishlist({productId: _id});
+            if(response.status === "success"){
+              toast.success(response.message);
+              const wishlistInfo = await getLoggedUserWishlist();  
+              dispatch(setWishlistInfo(wishlistInfo));              
+            }
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group hover:shadow-lg transition hover:translate-y-[-5px] duration-300">
       <div className="relative">
@@ -66,6 +81,7 @@ export default function ProductCard({ info }: { info: Product }) {
           <button
             className="bg-white h-8 w-8 rounded-full flex items-center justify-center transition shadow-sm text-gray-600 hover:text-red-500"
             title="Add to wishlist"
+            onClick={handleAddToWishlist}
           >
             <FontAwesomeIcon icon={faHeart} />
           </button>

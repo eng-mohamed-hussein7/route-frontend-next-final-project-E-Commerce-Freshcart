@@ -150,9 +150,9 @@ export default function Navbar() {
                 <>
                   <li>
                     <Link
-                      href={"account"}
+                      href={"/profile"}
                       className={
-                        pathname === "/account"
+                        pathname === "/profile"
                           ? "flex flex-col items-center text-primary-600"
                           : "flex flex-col items-center hover:text-primary-600 transition-colors duration-200"
                       }

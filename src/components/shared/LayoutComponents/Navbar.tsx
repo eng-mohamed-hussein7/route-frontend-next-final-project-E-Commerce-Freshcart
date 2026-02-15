@@ -226,7 +226,7 @@ export default function Navbar() {
                 <FontAwesomeIcon icon={faChevronDown} />
               </button>
 
-              <menu className="absolute group-hover:block hidden min-w-60 *:px-4 *:py-3 *:hover:bg-gray-100 rounded-lg bg-white shadow-lg divide-y-2 divide-gray-300/20">
+              <menu className="absolute group-hover:block hidden min-w-60 *:px-4 *:py-3 *:hover:bg-gray-100 rounded-lg bg-white shadow-lg divide-y-2 divide-gray-300/20 z-50">
                 <li>
                   <Link href={"#"} className="flex items-center gap-2">
                     <FontAwesomeIcon
@@ -340,14 +340,14 @@ export default function Navbar() {
                       href={"wishlist"}
                       className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/wishlist" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
-                  <div className="relative">
-                    <FontAwesomeIcon icon={faHeart} className="size-4" />
-                    {count !== 0 && (
-                      <span className="bg-red-500 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
-                        {count}
-                      </span>
-                    )}
-                  </div>
+                      <div className="relative">
+                        <FontAwesomeIcon icon={faHeart} className="size-4" />
+                        {count !== 0 && (
+                          <span className="bg-red-500 text-xs text-white flex items-center justify-center size-5 rounded-full absolute top-0 right-0 translate-x-1/2 -translate-y-1/2">
+                            {count}
+                          </span>
+                        )}
+                      </div>
                       <span className="text-sm">Wishlist</span>
                     </Link>
                   </li>

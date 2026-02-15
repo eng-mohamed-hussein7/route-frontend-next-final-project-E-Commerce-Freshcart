@@ -9,40 +9,45 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ForgetPasswordFormValues, forgetPasswordSchema } from "../../schemas/forget-password.schema";
+import {
+  ForgetPasswordFormValues,
+  forgetPasswordSchema,
+} from "../../schemas/forget-password.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import forgetPasswordAction from "../../server/forget-password.actions";
+import { forgetPasswordAction } from "../../server/forget-password.actions";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 
-export default function ForgetPasswordForm() {
-    const router = useRouter();
+export default function ForgetPasswordForm({
+  setStep,
+  setEmail,
+}: {
+  setStep: (step: number) => void;
+  setEmail: (email: string) => void;
+}) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<ForgetPasswordFormValues>(
-    {
-      defaultValues: {
-        email: "",
-      },
-      resolver: zodResolver(forgetPasswordSchema),
-      mode: "onSubmit",
-      reValidateMode: "onChange",
-    }
-  );
+  } = useForm<ForgetPasswordFormValues>({
+    defaultValues: {
+      email: "",
+    },
+    resolver: zodResolver(forgetPasswordSchema),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+  });
 
-    const onSubmit: SubmitHandler<ForgetPasswordFormValues> = async (values) => {
+  const onSubmit: SubmitHandler<ForgetPasswordFormValues> = async (values) => {
     try {
       const response = await forgetPasswordAction(values);
       console.log(response);
-      
+
       if (response.success) {
-        toast.success(response.message);
-        setTimeout(() => {
-          router.push("/login");
-        }, 2000);
+       setStep(2);
+       setEmail(values.email);
       } else {
         toast.error(response.message);
         if (response?.errors) {
@@ -57,7 +62,7 @@ export default function ForgetPasswordForm() {
       toast.error("Something went wrong");
     }
   };
-  
+
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">

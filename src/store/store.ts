@@ -3,11 +3,13 @@ import { authReducer, AuthState } from "@/features/auth/store/auth.slice";
 import { cartReducer, CartState } from "@/features/cart/store/cart.slice";
 import { useDispatch, useSelector } from "react-redux";
 import { wishlistReducer, WishlistState } from "@/features/wishlist/store/wishlist.slice";
+import { addressReducer, AddressState } from "@/features/profile/store/address.slice";
 
 export type PreloadedState = {
   auth: AuthState;
   cart: CartState;
   wishlist: WishlistState;
+  address: AddressState;
 };
 
 export function createStore(preloadedState?: PreloadedState) {
@@ -16,6 +18,7 @@ export function createStore(preloadedState?: PreloadedState) {
       auth: authReducer,
       cart: cartReducer,
       wishlist: wishlistReducer,
+      address: addressReducer,
     },
     preloadedState,
   });

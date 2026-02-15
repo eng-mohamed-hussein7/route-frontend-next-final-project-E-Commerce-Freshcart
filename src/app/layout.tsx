@@ -11,6 +11,8 @@ import { CartState } from "@/features/cart/store/cart.slice";
 import { getLoggedUserCart } from "@/features/cart/server/cart.action";
 import { WishlistState } from "@/features/wishlist/store/wishlist.slice";
 import { getLoggedUserWishlist } from "@/features/wishlist/server/wishlist.actions";
+import { AddressState } from "@/features/profile/store/address.slice";
+import { getLoggedUserAddress } from "@/features/profile/server/address.actions";
 
 const exo = Exo({
   variable: "--font-exo",
@@ -43,6 +45,13 @@ let defaultWishlistState : WishlistState ={
   error: null,
 }
 
+let defaultAddressState : AddressState = {
+  results: 0,
+  data: [],
+  isLoading: false,
+  error: null,
+}
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -52,6 +61,7 @@ export default async function RootLayout({
 
 let cartState = defaultCartState;
 let wishlistState = defaultWishlistState;
+let addressState = defaultAddressState;
   if(authValue.isAuthenticated){
     try {
       
@@ -72,16 +82,25 @@ let wishlistState = defaultWishlistState;
         isLoading: false,
         error: null,
       }
+
+      const addressValue = await getLoggedUserAddress();
+      addressState = {
+        results: addressValue.results,
+        data: addressValue.data,
+        isLoading: false,
+        error: null,
+      }
     } catch (error) {
       cartState = defaultCartState;
       wishlistState = defaultWishlistState;
+      addressState = defaultAddressState;
     }
   }
 
   return (
     <html lang="en">
       <body className={`${exo.className} font-medium`}>
-        <Providers preloadedState={{auth: authValue, cart: cartState, wishlist: wishlistState}}>
+        <Providers preloadedState={{auth: authValue, cart: cartState, wishlist: wishlistState, address: addressState}}>
           <Navbar />
           {children}
           <Footer />

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,15 +6,26 @@ import { faHeart, faEye } from "@fortawesome/free-regular-svg-icons";
 import {
   faPlus,
   faArrowsRotate,
+  faHeart as faHeartSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { Product } from "../types/products.types";
 import Ratings from "@/components/ui/Ratings";
-import { addProductToCart, getLoggedUserCart } from "@/features/cart/server/cart.action";
+import {
+  addProductToCart,
+  getLoggedUserCart,
+} from "@/features/cart/server/cart.action";
 import { toast } from "react-toastify";
-import { useAppDispatch } from "@/store/store";
+import { useAppDispatch, useAppSelector } from "@/store/store";
 import { setCartInfo } from "@/features/cart/store/cart.slice";
-import { addProductToWishlist, getLoggedUserWishlist } from "@/features/wishlist/server/wishlist.actions";
-import { setWishlistInfo } from "@/features/wishlist/store/wishlist.slice";
+import {
+  addProductToWishlist,
+  getLoggedUserWishlist,
+  removeProductFromWishlist,
+} from "@/features/wishlist/server/wishlist.actions";
+import {
+  removeProduct,
+  setWishlistInfo,
+} from "@/features/wishlist/store/wishlist.slice";
 
 export default function ProductCard({ info }: { info: Product }) {
   const {
@@ -33,36 +44,58 @@ export default function ProductCard({ info }: { info: Product }) {
     ? Math.round(((price - priceAfterDiscount) / price) * 100)
     : 0;
 
-    const dispatch = useAppDispatch();
-    const handleAddToCart = async () => {
-      try {
-        const response = await addProductToCart({productId: _id});
-            if(response.status === "success"){
-              toast.success(response.message);
-              const cartInfo = await getLoggedUserCart();  
-              dispatch(setCartInfo(cartInfo));              
-            }
-        } catch (error) {
-            toast.error("Something went wrong");
-        }
+  const dispatch = useAppDispatch();
+  const wishlistInfo = useAppSelector((state) => state.wishlist);
+  const handleAddToCart = async () => {
+    try {
+      const response = await addProductToCart({ productId: _id });
+      if (response.status === "success") {
+        toast.success(response.message);
+        const cartInfo = await getLoggedUserCart();
+        dispatch(setCartInfo(cartInfo));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
     }
+  };
 
-    const handleAddToWishlist = async () => {
-      try {
-        const response = await addProductToWishlist({productId: _id});
-            if(response.status === "success"){
-              toast.success(response.message);
-              const wishlistInfo = await getLoggedUserWishlist();  
-              dispatch(setWishlistInfo(wishlistInfo));              
-            }
-        } catch (error) {
-            toast.error("Something went wrong");
-        }
+  const handleAddToWishlist = async () => {
+    try {
+      const response = await addProductToWishlist({ productId: _id });
+      if (response.status === "success") {
+        toast.success(response.message);
+        const wishlistInfo = await getLoggedUserWishlist();
+        dispatch(setWishlistInfo(wishlistInfo));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
     }
+  };
 
-    const handleAddToCompare = () => {
-     toast.info("Compare feature is not available now");
+  const handleAddToCompare = () => {
+    toast.info("Compare feature is not available now");
+  };
+
+  const isProductInWishlist = (): boolean => {
+    const products = wishlistInfo.data;
+    if (!products || !Array.isArray(products)) return false;
+
+    return products.some((product) => {
+      if (typeof product === "string") return product === _id;
+      return product._id === _id;
+    });
+  };
+  const handleRemoveFromWishlist = async () => {
+    try {
+      const response = await removeProductFromWishlist({ productId: _id });
+      if (response.status === "success") {
+        toast.success(response.message);
+        dispatch(removeProduct({ productId: _id }));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
     }
+  };
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group hover:shadow-lg transition hover:translate-y-[-5px] duration-300">
       <div className="relative">
@@ -82,14 +115,25 @@ export default function ProductCard({ info }: { info: Product }) {
         </div>
 
         <div className="absolute top-3 right-3 flex flex-col space-y-2">
+          {isProductInWishlist() ? (
+            <button
+              className="bg-white h-8 w-8 rounded-full flex items-center justify-center transition shadow-sm text-red-500 hover:text-red-600"
+              onClick={handleRemoveFromWishlist}
+            >
+              <FontAwesomeIcon icon={faHeartSolid} />
+            </button>
+          ) : (
+            <button
+              className="bg-white h-8 w-8 rounded-full flex items-center justify-center transition shadow-sm text-gray-600 hover:text-red-500"
+              onClick={handleAddToWishlist}
+            >
+              <FontAwesomeIcon icon={faHeart} />
+            </button>
+          )}
           <button
-            className="bg-white h-8 w-8 rounded-full flex items-center justify-center transition shadow-sm text-gray-600 hover:text-red-500"
-            onClick={handleAddToWishlist}
+            className="bg-white h-8 w-8 rounded-full flex items-center justify-center text-gray-600 hover:text-emerald-600 shadow-sm transition"
+            onClick={handleAddToCompare}
           >
-            <FontAwesomeIcon icon={faHeart} />
-          </button>
-
-          <button className="bg-white h-8 w-8 rounded-full flex items-center justify-center text-gray-600 hover:text-emerald-600 shadow-sm transition" onClick={handleAddToCompare}>
             <FontAwesomeIcon icon={faArrowsRotate} />
           </button>
 
@@ -112,9 +156,10 @@ export default function ProductCard({ info }: { info: Product }) {
         </h3>
 
         <div className="flex items-center mb-2">
-            <Ratings rating={ratingsAverage}/>
+          <Ratings rating={ratingsAverage} />
           <span className="text-xs text-gray-500">
-            {ratingsAverage} ({ratingsQuantity} {ratingsQuantity === 1 ? "review" : "reviews"})
+            {ratingsAverage} ({ratingsQuantity}{" "}
+            {ratingsQuantity === 1 ? "review" : "reviews"})
           </span>
         </div>
 
@@ -129,7 +174,10 @@ export default function ProductCard({ info }: { info: Product }) {
               </span>
             )}
           </div>
-          <button onClick={handleAddToCart} className="h-10 w-10 rounded-full flex items-center justify-center transition bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-70">
+          <button
+            onClick={handleAddToCart}
+            className="h-10 w-10 rounded-full flex items-center justify-center transition bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-70"
+          >
             <FontAwesomeIcon icon={faPlus} />
           </button>
         </div>

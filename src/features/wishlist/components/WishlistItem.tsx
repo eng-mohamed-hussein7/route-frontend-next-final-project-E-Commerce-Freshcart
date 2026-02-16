@@ -65,9 +65,15 @@ export default function WishlistItem({ product }: { product: Product }) {
         },
       });
       if (result.isConfirmed) {
-        dispatch(removeProduct({ productId: product.id }));
-        await removeProductFromWishlist({ productId: product.id });
-        toast.success("Product removed successfully");
+        try {
+          const response = await removeProductFromWishlist({ productId: product.id });
+          if (response.status === "success") {
+            toast.success(response.message);
+            dispatch(removeProduct({ productId: product.id }));
+          }
+        } catch (error) {
+          toast.error("Something went wrong");
+        }
       }
     };
   return (

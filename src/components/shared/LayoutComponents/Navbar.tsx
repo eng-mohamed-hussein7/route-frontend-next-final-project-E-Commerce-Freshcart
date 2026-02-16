@@ -108,7 +108,7 @@ export default function Navbar() {
             <ul className="hidden lg:flex items-center gap-5">
               <li>
                 <Link
-                  href={"wishlist"}
+                  href={"/wishlist"}
                   className={
                     pathname === "/wishlist"
                       ? "flex flex-col items-center text-primary-600"
@@ -128,7 +128,7 @@ export default function Navbar() {
               </li>
               <li>
                 <Link
-                  href={"cart"}
+                  href={"/cart"}
                   className={
                     pathname === "/cart"
                       ? "flex flex-col items-center text-primary-600"
@@ -176,7 +176,7 @@ export default function Navbar() {
                 <>
                   <li>
                     <Link
-                      href={"signup"}
+                      href={"/signup"}
                       className={
                         pathname === "/signup"
                           ? "flex flex-col items-center text-primary-600"
@@ -189,7 +189,7 @@ export default function Navbar() {
                   </li>
                   <li>
                     <Link
-                      href={"login"}
+                      href={"/login"}
                       className={
                         pathname === "/login"
                           ? "flex flex-col items-center text-primary-600"
@@ -337,7 +337,7 @@ export default function Navbar() {
                 <ul className="space-y-2 mt-3 *:hover:bg-gray-100 duration-200 transition-colors ">
                   <li>
                     <Link
-                      href={"wishlist"}
+                      href={"/wishlist"}
                       className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/wishlist" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
                       <div className="relative">
@@ -353,7 +353,7 @@ export default function Navbar() {
                   </li>
                   <li>
                     <Link
-                      href={"cart"}
+                      href={"/cart"}
                       className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/cart" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
                       <div className="relative">
@@ -370,8 +370,8 @@ export default function Navbar() {
 
                   <li>
                     <Link
-                      href={"account"}
-                      className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/account" ? "text-primary-600 bg-primary-100" : ""}`}
+                      href={"/profile"}
+                      className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/profile" ? "text-primary-600 bg-primary-100" : ""}`}
                     >
                       <FontAwesomeIcon icon={faUser} className="size-4" />
                       <span className="text-sm">Account</span>
@@ -399,7 +399,7 @@ export default function Navbar() {
                     <>
                       <li>
                         <Link
-                          href={"signup"}
+                          href={"/signup"}
                           className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/signup" ? "text-primary-600 bg-primary-100" : ""}`}
                         >
                           <FontAwesomeIcon
@@ -411,7 +411,7 @@ export default function Navbar() {
                       </li>
                       <li>
                         <Link
-                          href={"login"}
+                          href={"/login"}
                           className={`flex items-center  py-3 px-2 w-full rounded-md gap-2 ${pathname === "/login" ? "text-primary-600 bg-primary-100" : ""}`}
                         >
                           <FontAwesomeIcon

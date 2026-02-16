@@ -83,7 +83,7 @@ Remove <span class="font-semibold text-gray-700">${item.product.title.slice(0, 4
           className="w-20 h-20 md:w-24 md:h-24 rounded-md object-cover bg-gray-100 shrink-0"
         />
         <div className="flex flex-col justify-center">
-          <Link href={`/product/${item.product._id}`} className="group/title">
+          <Link href={`/products/${item.product._id}`} className="group/title">
             <h3 className="font-bold text-gray-800 text-sm md:text-base line-clamp-2 group-hover/title:text-primary-600 transition-colors duration-300">
               {item.product.title}
             </h3>

@@ -13,12 +13,28 @@ import {
   faShareNodes,
   faShieldHalved,
   faTruckFast,
+  faHeart as faHeartSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { Product } from "../../types/products.types";
 import Ratings from "@/components/ui/Ratings";
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/image-gallery.css";
+import {
+  addProductToCart,
+  getLoggedUserCart,
+  updateProductQuantity,
+} from "@/features/cart/server/cart.action";
+import { toast } from "react-toastify";
+import { setCartInfo } from "@/features/cart/store/cart.slice";
+import { removeProduct } from "@/features/wishlist/store/wishlist.slice";
+import { useAppDispatch, useAppSelector } from "@/store/store";
+import {
+  addProductToWishlist,
+  getLoggedUserWishlist,
+  removeProductFromWishlist,
+} from "@/features/wishlist/server/wishlist.actions";
+import { setWishlistInfo } from "@/features/wishlist/store/wishlist.slice";
 
 export default function ProductInfo({ info }: { info: Product }) {
   const {
@@ -33,7 +49,6 @@ export default function ProductInfo({ info }: { info: Product }) {
     quantity,
     title,
     brand,
-    imageCover,
   } = info;
 
   const onSale = priceAfterDiscount ? priceAfterDiscount < price : false;
@@ -50,6 +65,70 @@ export default function ProductInfo({ info }: { info: Product }) {
   const handleDecrease = () => setQty((prev) => Math.max(1, prev - 1));
   const handleIncrease = () => setQty((prev) => Math.min(quantity, prev + 1));
 
+  const dispatch = useAppDispatch();
+  const wishlistInfo = useAppSelector((state) => state.wishlist);
+  const cartInfo = useAppSelector((state) => state.cart);
+  const handleAddToCart = async () => {
+    try {
+      const response = await addProductToCart({ productId: _id });
+      if (response.status === "success") {
+        if (qty > 1) {
+          const updateResponse = await updateProductQuantity({
+            productId: _id,
+            count: qty,
+          });
+          if (updateResponse.status === "success") {
+            const cartInfo = await getLoggedUserCart();
+            dispatch(setCartInfo(cartInfo));
+            toast.success("Product added successfully");
+          }
+        } else {
+          const cartInfo = await getLoggedUserCart();
+          dispatch(setCartInfo(cartInfo));
+          toast.success("Product added successfully");
+        }
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleAddToWishlist = async () => {
+    try {
+      const response = await addProductToWishlist({ productId: _id });
+      if (response.status === "success") {
+        toast.success(response.message);
+        const wishlistInfo = await getLoggedUserWishlist();
+        dispatch(setWishlistInfo(wishlistInfo));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleRemoveFromWishlist = async () => {
+    try {
+      const response = await removeProductFromWishlist({ productId: _id });
+      if (response.status === "success") {
+        toast.success(response.message);
+        dispatch(removeProduct({ productId: _id }));
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  };
+
+  const isProductInWishlist = (): boolean => {
+    const products = wishlistInfo.data;
+    if (!products || !Array.isArray(products)) return false;
+
+    return products.some((product) => {
+      if (typeof product === "string") return product === _id;
+      return product._id === _id;
+    });
+  };
   return (
     <section id="product-detail" className="py-6">
       <div className="container mx-auto px-4">
@@ -57,18 +136,18 @@ export default function ProductInfo({ info }: { info: Product }) {
           {/* ── Product Images ── */}
           <div id="product-images" className="lg:w-1/4">
             <div className="bg-white rounded-xl shadow-sm p-4 sticky top-4">
-              <ImageGallery items={images.map((image) => {
-                return {
-                  original: image,
-                  thumbnail: image,
-                }
-              })}
+              <ImageGallery
+                items={images.map((image) => {
+                  return {
+                    original: image,
+                    thumbnail: image,
+                  };
+                })}
                 showPlayButton={false}
                 showFullscreenButton={false}
                 showNav={false}
                 showThumbnails={true}
               />
-              
             </div>
           </div>
 
@@ -147,9 +226,7 @@ export default function ProductInfo({ info }: { info: Product }) {
 
               {/* Description */}
               <div className="border-t border-gray-100 pt-5 mb-6">
-                <p className="text-gray-600 leading-relaxed ">
-                  {description}
-                </p>
+                <p className="text-gray-600 leading-relaxed ">{description}</p>
               </div>
 
               {/* Quantity Selector */}
@@ -213,6 +290,8 @@ export default function ProductInfo({ info }: { info: Product }) {
                 <button
                   id="add-to-cart"
                   className="flex-1 text-white py-3.5 px-6 rounded-xl font-medium hover:bg-primary-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary-600/25 bg-primary-600"
+                  disabled={qty > quantity}
+                  onClick={handleAddToCart}
                 >
                   <FontAwesomeIcon icon={faCartShopping} />
                   Add to Cart
@@ -228,13 +307,24 @@ export default function ProductInfo({ info }: { info: Product }) {
 
               {/* Wishlist & Share */}
               <div className="flex gap-3 mb-6">
-                <button
-                  id="wishlist-button"
-                  className="flex-1 border-2 py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2 border-gray-200 text-gray-700 hover:border-primary-300 hover:text-primary-600"
-                >
-                  <FontAwesomeIcon icon={faHeart} />
-                  Add to Wishlist
-                </button>
+                {isProductInWishlist() ? (
+                  <button
+                    className="flex-1 py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2 border  border-red-200 bg-red-50 text-red-600 hover:border-red-300 hover:text-red-600 cursor-pointer"
+                    onClick={handleRemoveFromWishlist}
+                  >
+                    <FontAwesomeIcon icon={faHeartSolid} />
+                    In Wishlist
+                  </button>
+                ) : (
+                  <button
+                    id="wishlist-button"
+                    className="flex-1 border-2 py-3 px-4 rounded-xl font-medium transition flex items-center justify-center gap-2 border-gray-200 text-gray-700 hover:border-primary-300 hover:text-primary-600"
+                    onClick={handleAddToWishlist}
+                  >
+                    <FontAwesomeIcon icon={faHeart} />
+                    Add to Wishlist
+                  </button>
+                )}
                 <button className="border-2 border-gray-200 text-gray-700 py-3 px-4 rounded-xl hover:border-primary-300 hover:text-primary-600 transition">
                   <FontAwesomeIcon icon={faShareNodes} />
                 </button>

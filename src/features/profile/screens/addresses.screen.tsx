@@ -1,12 +1,12 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import ProfileScreen from "./profile.screen";
 import EmptyAddress from "../components/addresses/EmptyAddress";
 import { useState } from "react";
 import FormAddress from "../components/addresses/FormAddress";
 import { useAppSelector } from "@/store/store";
 import AddressCard from "../components/addresses/AddressCard";
+import LayoutProfile from "../components/LayoutProfile/LayoutProfile";
 
 export default function AddressesScreen() {
   const [showForm, setShowForm] = useState(false);
@@ -14,7 +14,7 @@ export default function AddressesScreen() {
   console.log(data);
   return (
     <>
-      <ProfileScreen>
+      <LayoutProfile>
         <div>
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -42,7 +42,7 @@ export default function AddressesScreen() {
             </div>
           )}
         </div>
-      </ProfileScreen>
+      </LayoutProfile>
       {showForm && <FormAddress setShowForm={setShowForm} />}
     </>
   );

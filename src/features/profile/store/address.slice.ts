@@ -31,9 +31,9 @@ const addressSlice = createSlice({
             state.results = state.data.length;
            }
         },
-        updateAddress(state, action: PayloadAction<{addressId: string, address: Address}>) {
-            const addressId = action.payload.addressId;
-            const address = action.payload.address;
+        updateAddress(state, action: PayloadAction<Address>) {
+            const addressId = action.payload._id;
+            const address = action.payload;
             const updatedAddress = state.data.find((item) => item._id === addressId);
             if(updatedAddress){
                 updatedAddress.name = address.name;

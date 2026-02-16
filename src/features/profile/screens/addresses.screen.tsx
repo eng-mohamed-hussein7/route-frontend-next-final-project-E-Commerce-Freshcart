@@ -11,6 +11,7 @@ import AddressCard from "../components/addresses/AddressCard";
 export default function AddressesScreen() {
   const [showForm, setShowForm] = useState(false);
   const {data, results} = useAppSelector((state) => state.address);
+  console.log(data);
   return (
     <>
       <ProfileScreen>

@@ -59,6 +59,10 @@ export default function ProductCard({ info }: { info: Product }) {
             toast.error("Something went wrong");
         }
     }
+
+    const handleAddToCompare = () => {
+     toast.info("Compare feature is not available now");
+    }
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden group hover:shadow-lg transition hover:translate-y-[-5px] duration-300">
       <div className="relative">
@@ -80,13 +84,12 @@ export default function ProductCard({ info }: { info: Product }) {
         <div className="absolute top-3 right-3 flex flex-col space-y-2">
           <button
             className="bg-white h-8 w-8 rounded-full flex items-center justify-center transition shadow-sm text-gray-600 hover:text-red-500"
-            title="Add to wishlist"
             onClick={handleAddToWishlist}
           >
             <FontAwesomeIcon icon={faHeart} />
           </button>
 
-          <button className="bg-white h-8 w-8 rounded-full flex items-center justify-center text-gray-600 hover:text-emerald-600 shadow-sm transition">
+          <button className="bg-white h-8 w-8 rounded-full flex items-center justify-center text-gray-600 hover:text-emerald-600 shadow-sm transition" onClick={handleAddToCompare}>
             <FontAwesomeIcon icon={faArrowsRotate} />
           </button>
 

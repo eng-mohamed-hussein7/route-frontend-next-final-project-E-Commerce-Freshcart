@@ -3,34 +3,59 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { AddressInput, addressSchema } from "../../schemas/address.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addAddress } from "../../server/address.actions";
+import { addAddress, updateAddress } from "../../server/address.actions";
 import { toast } from "react-toastify";
 import { useAppDispatch } from "@/store/store";
-import { addAddress as addAddressToStore } from "../../store/address.slice";
+import {
+  addAddress as addAddressToStore,
+  updateAddress as updateAddressToStore,
+} from "../../store/address.slice";
+import { Address } from "../../types/address.types";
 
-export default function FormAddress({ setShowForm }: { setShowForm: (showForm: boolean) => void }) {
+export default function FormAddress({
+  setShowForm,
+  address,
+}: {
+  setShowForm: (showForm: boolean) => void;
+  address?: Address;
+}) {
   const dispatch = useAppDispatch();
-  const { register, handleSubmit, formState: { errors } } = useForm<AddressInput>({
-  defaultValues: {
-    name: "",
-    details: "",
-    phone: "",
-    city: "",
-  },
-  resolver: zodResolver(addressSchema),
-  mode: "onSubmit",
-  reValidateMode: "onChange",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AddressInput>({
+    defaultValues: {
+      name: address?.name || "",
+      details: address?.details || "",
+      phone: address?.phone || "",
+      city: address?.city || "",
+    },
+    resolver: zodResolver(addressSchema),
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
 
   const onSubmit: SubmitHandler<AddressInput> = async (data) => {
     try {
-      const response = await addAddress(data);
-      if (response.status === "success") {
-        toast.success(response.message);
-        setShowForm(false);
-        dispatch(addAddressToStore(response));
+      if (address) {
+        const response = await updateAddress(address._id, data);
+        if (response.status === "success") {
+          toast.success(response.message);
+          setShowForm(false);
+          dispatch(updateAddressToStore(response.data));
+        } else {
+          toast.error(response.message);
+        }
       } else {
-        toast.error(response.message);
+        const response = await addAddress(data);
+        if (response.status === "success") {
+          toast.success(response.message);
+          setShowForm(false);
+          dispatch(addAddressToStore(response));
+        } else {
+          toast.error(response.message);
+        }
       }
     } catch (error) {
       toast.error("Something went wrong");
@@ -39,12 +64,20 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setShowForm(false)} />
+      <div
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={() => setShowForm(false)}
+      />
 
       <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 sm:p-8 animate-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Add New Address</h2>
-          <button className="w-9 h-9 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors" onClick={() => setShowForm(false)}>
+          <h2 className="text-xl font-bold text-gray-900">
+            {address ? "Edit Address" : "Add New Address"}
+          </h2>
+          <button
+            className="w-9 h-9 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors"
+            onClick={() => setShowForm(false)}
+          >
             <FontAwesomeIcon icon={faXmark} />
           </button>
         </div>
@@ -56,11 +89,14 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
             </label>
             <input
               placeholder="e.g. Home, Office"
+              disabled={address ? true : false}
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
               {...register("name")}
               type="text"
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
@@ -73,7 +109,9 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all resize-none"
               {...register("details")}
             />
-            {errors.details && <p className="text-red-500 text-sm">{errors.details.message}</p>}
+            {errors.details && (
+              <p className="text-red-500 text-sm">{errors.details.message}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -87,7 +125,9 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
                 {...register("phone")}
                 type="tel"
               />
-              {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm">{errors.phone.message}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -99,7 +139,9 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
                 {...register("city")}
                 type="text"
               />
-              {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
+              {errors.city && (
+                <p className="text-red-500 text-sm">{errors.city.message}</p>
+              )}
             </div>
           </div>
 
@@ -115,7 +157,7 @@ export default function FormAddress({ setShowForm }: { setShowForm: (showForm: b
               type="submit"
               className="flex-1 py-3 px-6 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-lg shadow-primary-600/25"
             >
-              Add Address
+              {address ? "Update Address" : "Add Address"}
             </button>
           </div>
         </form>
